@@ -1,0 +1,25 @@
+% Evolution of states with t_f%
+clc; clear all; close all;
+x01 = 0;  
+x02 = 0;
+x03 = 0;
+beta = 1;
+
+figure;
+grid on;
+tf = 1.5
+    f = @(x1,x2,x3) ([x1 - exp(tf)*x01; x2 - exp(2*tf)*x02;x3-exp(3*tf)*x03]' * ...
+                  ([exp(2*tf)/2 - 1/2, exp(3*tf)/3 - 1/3, exp(4*tf)/4 - 1/4;
+exp(3*tf)/3 - 1/3, exp(4*tf)/4 - 1/4, exp(5*tf)/5 - 1/5;
+exp(4*tf)/4 - 1/4, exp(5*tf)/5 - 1/5, exp(6*tf)/6 - 1/6])^-1 * ...
+                  [x1 - exp(tf)*x01; x2 - exp(2*tf)*x02;x3-exp(3*tf)*x03]) - beta;
+
+    % Plot the implicit function
+    fimplicit3(f,[-10,10,-50,50,-100, 100]);
+
+% legend('show');
+% xlabel('x_1'); ylabel('x_2');
+
+
+% fimplicit3(@f,[-50, 70, -10, 12])
+

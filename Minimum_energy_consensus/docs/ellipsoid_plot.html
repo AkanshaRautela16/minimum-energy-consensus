@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>ellipsoid_plot</title>
+<meta name="generator" content="MATLAB 23.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-02-27">
+<meta name="DC.source" content="ellipsoid_plot.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="comment">% Clear workspace and command window</span>
+clear; clc; close <span class="string">all</span>;
+
+<span class="comment">% 1. Prompt the user to input the time t</span>
+t = input(<span class="string">'Enter the time t (e.g., 1.5): '</span>);
+
+<span class="keyword">if</span> isempty(t) || t &lt;= 0
+    error(<span class="string">'Time must be a strictly positive number.'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% 2. Define System Matrices</span>
+A = [1, -1;
+     1,  1];
+B = [0;
+     1];
+
+<span class="comment">% 3. Compute State Transition Matrix e^(At)</span>
+eAt = expm(A * t);
+
+<span class="comment">% 4. Compute Finite-Time Gramian Wc(t) using the Matrix Exponential Trick</span>
+n = size(A, 1);
+M = [A,            B*B';
+     zeros(n, n), -A'];
+
+<span class="comment">% Compute exponential of the block matrix</span>
+E = expm(M * t);
+
+<span class="comment">% Extract the sub-blocks</span>
+E12 = E(1:n, n+1:2*n);
+E22 = E(n+1:2*n, n+1:2*n);
+
+<span class="comment">% The exact finite-time Gramian</span>
+Wc = E12 * E22';
+
+<span class="comment">% 5. Define Initial Conditions (Each column is a different x0)</span>
+x0_list = [0, 1, 0;
+           0, 0, 1];
+
+labels = {<span class="string">'Origin (0,0)'</span>, <span class="string">'Offset x_1 (1,0)'</span>, <span class="string">'Offset x_2 (0,1)'</span>};
+colors = lines(3); <span class="comment">% Generate 3 distinct colors</span>
+
+<span class="comment">% 6. Prepare the Plot</span>
+figure(<span class="string">'Name'</span>, sprintf(<span class="string">'Reachable Sets at t = %.4f'</span>, t), <span class="string">'Color'</span>, <span class="string">'w'</span>);
+hold <span class="string">on</span>; grid <span class="string">on</span>;
+xlabel(<span class="string">'x_1'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+ylabel(<span class="string">'x_2'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+title(sprintf(<span class="string">'Reachable Ellipsoids at time t = %.4f (E_{max} = 1)'</span>, t), <span class="string">'FontSize'</span>, 14);
+
+<span class="comment">% Generate 200 points around a standard unit circle</span>
+theta = linspace(0, 2*pi, 200);
+unit_circle = [cos(theta); sin(theta)];
+
+<span class="comment">% Matrix square root of Wc maps the unit circle exactly onto the boundary</span>
+<span class="comment">% of the equation z^T * Wc^-1 * z = 1</span>
+Wc_half = sqrtm(Wc);
+
+<span class="comment">% 7. Plot each ellipsoid</span>
+<span class="keyword">for</span> i = 1:size(x0_list, 2)
+    x0 = x0_list(:, i);
+
+    <span class="comment">% Compute the center of the ellipsoid (zero-input response: e^At * x0)</span>
+    center = eAt * x0;
+
+    <span class="comment">% Compute the actual coordinates of the ellipsoid boundary</span>
+    ellipsoid_pts = center + Wc_half * unit_circle;
+
+    <span class="comment">% Plot the boundary curve</span>
+    plot(ellipsoid_pts(1,:), ellipsoid_pts(2,:), <span class="string">'LineWidth'</span>, 2, <span class="keyword">...</span>
+        <span class="string">'Color'</span>, colors(i,:), <span class="string">'DisplayName'</span>, labels{i});
+
+    <span class="comment">% Plot the center dot</span>
+    plot(center(1), center(2), <span class="string">'.'</span>, <span class="string">'MarkerSize'</span>, 25, <span class="string">'Color'</span>, colors(i,:), <span class="keyword">...</span>
+        <span class="string">'HandleVisibility'</span>, <span class="string">'off'</span>); <span class="comment">% hide center dot from the legend</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Ensure the X and Y axes are scaled equally so ellipses aren't distorted</span>
+axis <span class="string">equal</span>;
+legend(<span class="string">'Location'</span>, <span class="string">'best'</span>, <span class="string">'FontSize'</span>, 11);
+</pre>
+<pre class="codeoutput error">Error using input
+Cannot call INPUT from EVALC.
+
+Error in ellipsoid_plot (line 5)
+t = input('Enter the time t (e.g., 1.5): ');
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+% Clear workspace and command window
+clear; clc; close all;
+
+% 1. Prompt the user to input the time t
+t = input('Enter the time t (e.g., 1.5): ');
+
+if isempty(t) || t <= 0
+    error('Time must be a strictly positive number.');
+end
+
+% 2. Define System Matrices
+A = [1, -1; 
+     1,  1];
+B = [0; 
+     1];
+
+% 3. Compute State Transition Matrix e^(At)
+eAt = expm(A * t);
+
+% 4. Compute Finite-Time Gramian Wc(t) using the Matrix Exponential Trick
+n = size(A, 1);
+M = [A,            B*B'; 
+     zeros(n, n), -A'];
+
+% Compute exponential of the block matrix
+E = expm(M * t);
+
+% Extract the sub-blocks
+E12 = E(1:n, n+1:2*n);
+E22 = E(n+1:2*n, n+1:2*n);
+
+% The exact finite-time Gramian
+Wc = E12 * E22';
+
+% 5. Define Initial Conditions (Each column is a different x0)
+x0_list = [0, 1, 0; 
+           0, 0, 1]; 
+
+labels = {'Origin (0,0)', 'Offset x_1 (1,0)', 'Offset x_2 (0,1)'};
+colors = lines(3); % Generate 3 distinct colors
+
+% 6. Prepare the Plot
+figure('Name', sprintf('Reachable Sets at t = %.4f', t), 'Color', 'w');
+hold on; grid on;
+xlabel('x_1', 'FontSize', 12, 'FontWeight', 'bold'); 
+ylabel('x_2', 'FontSize', 12, 'FontWeight', 'bold');
+title(sprintf('Reachable Ellipsoids at time t = %.4f (E_{max} = 1)', t), 'FontSize', 14);
+
+% Generate 200 points around a standard unit circle
+theta = linspace(0, 2*pi, 200);
+unit_circle = [cos(theta); sin(theta)];
+
+% Matrix square root of Wc maps the unit circle exactly onto the boundary
+% of the equation z^T * Wc^-1 * z = 1
+Wc_half = sqrtm(Wc);
+
+% 7. Plot each ellipsoid
+for i = 1:size(x0_list, 2)
+    x0 = x0_list(:, i);
+    
+    % Compute the center of the ellipsoid (zero-input response: e^At * x0)
+    center = eAt * x0;
+    
+    % Compute the actual coordinates of the ellipsoid boundary
+    ellipsoid_pts = center + Wc_half * unit_circle;
+    
+    % Plot the boundary curve
+    plot(ellipsoid_pts(1,:), ellipsoid_pts(2,:), 'LineWidth', 2, ...
+        'Color', colors(i,:), 'DisplayName', labels{i});
+    
+    % Plot the center dot
+    plot(center(1), center(2), '.', 'MarkerSize', 25, 'Color', colors(i,:), ...
+        'HandleVisibility', 'off'); % hide center dot from the legend
+end
+
+% Ensure the X and Y axes are scaled equally so ellipses aren't distorted
+axis equal;
+legend('Location', 'best', 'FontSize', 11);
+##### SOURCE END #####
+-->
+</body>
+</html>

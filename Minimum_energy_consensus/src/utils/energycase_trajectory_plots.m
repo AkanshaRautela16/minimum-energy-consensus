@@ -1,0 +1,117 @@
+clc;clear all;close all
+xc = -0.5 ;  
+yc = 0;
+IC = [3,-1.1; 
+      -3, 1.1;  
+      3.1, -3;
+      -3.1 ,3; 
+       6.5, 6.5 ;
+       -7.5,-6.5];
+tf = 8.158576;
+
+%% Consensus States %%
+A = [0 1;0 0]; B = [0 1]'; C = eye(2); D = zeros(2,1)
+Q = [tf^3/3 tf^2/2; tf^2/2 tf];
+G = ss(A,B,C,D);
+arc_a1 = [0:0.1:tf];
+u1 = [];
+for i = 1:length(arc_a1)
+u1  = [u1 B'*expm(A'*(tf-arc_a1(i)))*Q^-1*([xc;yc]-expm(A*tf)*[IC(1,:)]')]
+end 
+[Y1a1,~,~] = lsim(G,u1,arc_a1,[IC(1,1) IC(1,2)]'); 
+
+
+u2 = [];
+for i = 1:length(arc_a1)
+u2  = [u2 B'*expm(A'*(tf-arc_a1(i)))*Q^-1*([xc;yc]-expm(A*tf)*[IC(2,:)]')]
+end 
+[Y1a2,~,~] = lsim(G,u2,arc_a1,[IC(2,1) IC(2,2)]'); 
+
+
+u3 = [];
+for i = 1:length(arc_a1)
+u3  = [u3 B'*expm(A'*(tf-arc_a1(i)))*Q^-1*([xc;yc]-expm(A*tf)*[IC(3,:)]')]
+end 
+[Y1a3,~,~] = lsim(G,u3,arc_a1,[IC(3,1) IC(3,2)]'); 
+
+u4 = [];
+for i = 1:length(arc_a1)
+u4  = [u4 B'*expm(A'*(tf-arc_a1(i)))*Q^-1*([xc;yc]-expm(A*tf)*[IC(4,:)]')]
+end 
+[Y1a4,~,~] = lsim(G,u4,arc_a1,[IC(4,1) IC(4,2)]'); 
+
+u5 = [];
+for i = 1:length(arc_a1)
+u5  = [u5 B'*expm(A'*(tf-arc_a1(i)))*Q^-1*([xc;yc]-expm(A*tf)*[IC(5,:)]')]
+end 
+[Y1a5,~,~] = lsim(G,u5,arc_a1,[IC(5,1) IC(5,2)]'); 
+
+u6 = [];
+for i = 1:length(arc_a1)
+u6  = [u6 B'*expm(A'*(tf-arc_a1(i)))*Q^-1*([xc;yc]-expm(A*tf)*[IC(6,:)]')]
+end 
+[Y1a6,~,~] = lsim(G,u6,arc_a1,[IC(6,1) IC(6,2)]'); 
+
+
+Ay1=[Y1a1(:,1)];
+By1=[Y1a1(:,2)];
+
+Ay2=[Y1a2(:,1)];
+By2=[Y1a2(:,2)];
+
+Ay3=[Y1a3(:,1)];
+By3=[Y1a3(:,2)];
+
+Ay4=[Y1a4(:,1)];
+By4=[Y1a4(:,2)];
+
+Ay5=[Y1a5(:,1)];
+By5=[Y1a5(:,2)];
+
+Ay6=[Y1a6(:,1)];
+By6=[Y1a6(:,2)];
+
+plot(Ay1,By1,'Color',[0.8500 0.3250 0.0980],'Linewidth',2); hold on %
+plot(Ay2,By2,'Color',[0 0.4470 0.7410],'Linewidth',2); hold on %
+plot(Ay3,By3,'Color',[0.9290 0.6940 0.1250],'Linewidth',2); hold on %
+plot(Ay4,By4,'Color',[0.4660 0.6740 0.1880],'Linewidth',2); hold on %
+plot(Ay5,By5,'Color',[0.3010 0.7450 0.9330],'Linewidth',2); hold on %
+plot(Ay6,By6,'Color',[0.6350 0.0780 0.1840],'Linewidth',2); hold on %
+
+plot(IC(1,1),IC(1,2),'o','Color',[0.8500 0.3250 0.0980],'Linewidth',2)
+hold on
+plot(IC(2,1),IC(2,2),'o','Color',[0 0.4470 0.7410],'Linewidth',2)
+hold on
+plot(IC(3,1),IC(3,2),'o','Color',[0.9290 0.6940 0.1250],'Linewidth',2)
+hold on
+plot(IC(4,1),IC(4,2),'o','Color',[0.4660 0.6740 0.1880],'Linewidth',2)
+hold on
+plot(IC(5,1),IC(5,2),'o','Color',[0.3010 0.7450 0.9330],'Linewidth',2)
+hold on
+plot(IC(6,1),IC(6,2),'o','Color',[0.6350 0.0780 0.1840],'Linewidth',2)
+hold on
+plot(xc,yc,'p', 'MarkerSize', 8, 'MarkerEdgeColor', 'black', 'MarkerFaceColor', 'y', 'LineWidth', 2)
+legend('$a_1$','$a_2$', '$a_3$', '$a_4$','$a_5$','$a_6$','$\mathbf{x}_{10}$','$\mathbf{x}_{20}$','$\mathbf{x}_{30}$','$\mathbf{x}_{40}$','$\mathbf{x}_{50}$','$\mathbf{x}_{60}$','$\bar{\mathbf{x}}$','Fontsize', 12, 'fontweight','bold','Interpreter','latex')
+
+axis padded
+
+%% control inputs %%
+tt = [0:0.1:tf]
+s = size(tt)
+
+figure(2);
+        plot (tt, u1,'Color',[0.8500 0.3250 0.0980],'linewidth',2);
+        hold on;
+        plot (tt, u2,'Color',[0 0.4470 0.7410],'linewidth',2);
+        hold on;
+        plot (tt, u3,'Color',[0.9290 0.6940 0.1250],'linewidth',2);
+        hold on;
+        plot (tt, u4,'Color',[0.4660 0.6740 0.1880],'linewidth',2);
+        hold on;
+        plot (tt, u5,'Color',[0.3010 0.7450 0.9330],'linewidth',2);
+        hold on;
+        plot (tt, u6,'Color',[0.6350 0.0780 0.1840],'linewidth',2);
+        xlabel('Time(sec)','Fontsize',16, 'FontWeight','bold');
+        ylabel('u(t)','Fontsize',16, 'FontWeight','bold');
+        axis([0 8.1 -4 4])
+ legend('$u_1(t)$','$u_2(t)$', '$u_3(t)$', '$u_4(t)$','$u_5(t)$', '$u_6(t)$','Fontsize', 12, 'fontweight','bold','Interpreter','latex')
